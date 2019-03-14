@@ -6,7 +6,10 @@ import "./styles.css";
 function App() {
   return (
     <div className="App">
-      <h1>Hello from CodeSandBox!</h1>
+      <div className="jumbotron">
+        <h1 className="jumbotron-title">SearchSpace &#128640;</h1>
+        <h2 className="jumbotron-subtitle">Explore beyond and within</h2>
+      </div>
     </div>
   );
 }
