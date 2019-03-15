@@ -1,0 +1,21 @@
+@import url("https://fonts.googleapis.com/css?family=Merriweather|Roboto+Mono");
+
+html,
+body,
+#root,
+.App {
+  height: 100%;
+  margin: 0;
+}
+
+.App {
+  /* Default .App Values (can be changed in state) */
+  background-position: top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  /* center content */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

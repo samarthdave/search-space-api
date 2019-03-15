@@ -4,6 +4,8 @@ import { Pane, Button } from 'evergreen-ui';
 import { faSpaceShuttle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import './Welcome.css';
+
 class Welcome extends Component {
   render() {
     return (
@@ -26,7 +28,7 @@ class Welcome extends Component {
           height={40}
         >
           Get started
-          </Button>
+        </Button>
       </Pane>
     );
   }

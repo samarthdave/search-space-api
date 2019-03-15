@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import './styles.css';
+import './App.css';
 
 // import Components after stylesheet import
 import Welcome from './components/Welcome';
