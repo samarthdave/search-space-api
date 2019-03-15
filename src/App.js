@@ -5,6 +5,7 @@ import './App.css';
 
 // import Components after stylesheet import
 import Welcome from './components/Welcome';
+import Search from './components/Search';
 
 class App extends Component {
   // set state with background image using CommonJS
@@ -35,10 +36,11 @@ class App extends Component {
     appStyle.backgroundImage = `url(${currentBackgroundImage})`;
 
     return [
-      <div>Navigation</div>,
+      // <div>Navigation</div>,
       <Switch>
         <div className="App" style={appStyle}>
           <Route exact path="/" component={Welcome} />
+          <Route path="/search" component={Search} />
           {/* <Route path="/path/to/something" component={ComponentName} />
           <Route component={NotFound} /> */}
         </div>

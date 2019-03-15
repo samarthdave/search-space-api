@@ -8,6 +8,12 @@ body,
   margin: 0;
 }
 
+/* Override ugly default anchor styling */
+a {
+  text-decoration: none!important;
+  color: inherit;
+}
+
 .App {
   /* Default .App Values (can be changed in state) */
   background-position: top;
