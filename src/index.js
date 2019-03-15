@@ -3,6 +3,9 @@ import ReactDOM from "react-dom";
 
 import { Pane, Text, Button } from "evergreen-ui";
 
+import { faSpaceShuttle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import "./styles.css";
 
 class App extends Component {
@@ -39,7 +42,7 @@ class App extends Component {
           justifyContent="center"
           border="muted"
         >
-          <h1 className="jumbotron-title">SearchSpace &#128640;</h1>
+          <h1 className="jumbotron-title">SearchSpace <FontAwesomeIcon icon={faSpaceShuttle} /></h1>
           <h2 className="jumbotron-subtitle">Explore beyond and within</h2>
           <Button
             appearance="primary"
