@@ -1,7 +1,8 @@
 .search-pane {
-  background: #000;
   /* fallback background colors if rgba not supported */
-  background: rgba(173, 173, 173, 0.5);
+  background: rgb(100, 100, 100);
+  background: rgba(150, 150, 150, 0.6);
+  
   border-radius: 3px;
   width: 80%;
   max-width: 900px;
@@ -30,6 +31,12 @@ h2 {
 }
 
 .search-input {
-  /* center input */
+  margin: 0 auto;
+  width: 80%;
+  max-width: 500px;
+}
+
+.search-input input {
   text-align: center;
+  font-size: 1.2rem;
 }

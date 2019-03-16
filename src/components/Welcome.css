@@ -1,7 +1,8 @@
 .jumbotron {
-  background: #000;
   /* fallback background colors if rgba not supported */
-  background: rgba(173, 173, 173, 0.5);
+  background: rgb(100, 100, 100);
+  background: rgba(150, 150, 150, 0.6);
+
   border-radius: 3px;
   width: 60%;
   max-width: 500px;

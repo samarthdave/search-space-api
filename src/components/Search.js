@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { Pane, Button, Icon, TagInput } from 'evergreen-ui';
+import { Pane, Button, Icon, SearchInput } from 'evergreen-ui';
 import Quote from 'inspirational-quotes';
+
+import { NasaAPI } from '../api';
 
 import './Search.css';
 
@@ -10,9 +12,13 @@ class Search extends Component {
     this.state = {
       quote: '',
       author: '',
-      searchValues: []
+      searchValue: ''
     };
+
+    // put methods into current context
     this.setQuote = this.setQuote.bind(this);
+    this.searchInputChange = this.searchInputChange.bind(this);
+    this.updateSearchResults = this.updateSearchResults.bind(this);
   }
 
   componentWillMount() {
@@ -35,11 +41,25 @@ class Search extends Component {
     });
   }
 
+  async updateSearchResults(query) {
+    const results = await NasaAPI.search(query);
+    console.log(results);
+  }
+
+  searchInputChange(e) {
+    const searchValue = e.target.value;
+    this.setState({
+      searchValue
+    }, () => { // do something after setState
+      this.updateSearchResults(searchValue);
+    });
+  }
+
   render() {
     const {
       quote,
       author,
-      searchValues
+      searchValue
     } = this.state;
 
     return (
@@ -59,11 +79,12 @@ class Search extends Component {
         </h2>
         {/* surround Input w/styling div */}
         <div className="search-input">
-          <TagInput
-            inputProps={{ placeholder: 'Search for ... (e.g. Mars)' }}
-            width="80%"
-            values={searchValues}
-            onChange={(valuess) => { console.log(valuess); }}
+          <SearchInput
+            width="100%"
+            height={40}
+            placeholder='Search for ... (e.g. "Mars")'
+            value={searchValue}
+            onChange={this.searchInputChange}
           />
         </div>
       </Pane>

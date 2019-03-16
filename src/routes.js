@@ -5,18 +5,15 @@ import App from './App';
 import Welcome from './components/Welcome';
 import Search from './components/Search';
 
-const createRoutes = () => {
-  return [
-    // <div>Navigation</div>,
-    <Router>
-      <App>
-        <Switch>
-          <Route exact path="/" component={Welcome}/>
-          <Route exact path="/search" component={Search}/>
-        </Switch>
-      </App>
-    </Router>
-  ];
-};
+const createRoutes = () => (
+  <Router>
+    <App>
+      <Switch>
+        <Route exact path="/" component={Welcome}/>
+        <Route exact path="/search" component={Search}/>
+      </Switch>
+    </App>
+  </Router>
+);
 
 export default createRoutes;
