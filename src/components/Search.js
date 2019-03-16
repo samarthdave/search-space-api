@@ -12,13 +12,18 @@ class Search extends Component {
     this.state = {
       quote: '',
       author: '',
-      searchValue: ''
+      searchValue: '',
+      totalHits: 0,
+      hits: [],
+      MAXRESULTS: 10
     };
 
     // put methods into current context
     this.setQuote = this.setQuote.bind(this);
     this.searchInputChange = this.searchInputChange.bind(this);
     this.updateSearchResults = this.updateSearchResults.bind(this);
+
+    this.updateSearchResults('rover');
   }
 
   componentWillMount() {
@@ -42,8 +47,31 @@ class Search extends Component {
   }
 
   async updateSearchResults(query) {
-    const results = await NasaAPI.search(query);
-    console.log(results);
+    // if user removes all input
+    console.log(query, query.length, query.length===0)
+    if(query.length === 0) {
+      this.setState({
+        hits: [],
+        totalHits: 0
+      });
+      return;
+    }
+    const response = await NasaAPI.search(query);
+    
+    let hits = [];
+    let totalHits = -4;
+
+    if(response.status === 200) {
+      totalHits = response.data.collection.metadata.total_hits;
+      if(totalHits !== 0) {
+        hits = response.data.collection.items;
+      }
+    }
+
+    this.setState({
+      hits,
+      totalHits
+    });
   }
 
   searchInputChange(e) {
@@ -55,12 +83,46 @@ class Search extends Component {
     });
   }
 
+  imageResultsHelper(hit) {
+    // validate imgURL ref value or default to ''
+    let imgURL = '';
+    if(hit.links) {
+      imgURL = hit.links[0].href;
+    } else if(hit.data && hit.data[0].href) {
+      imgURL = hit.data[0].href;
+    }
+    // validate title value
+    let title = '';
+    if(hit.data) {
+      // cut title off at 30 characters
+      title = hit.data[0].title.slice(0,30);
+    }
+    return {
+      imgURL,
+      title
+    };
+  }
+
   render() {
     const {
       quote,
       author,
-      searchValue
+      searchValue,
+      totalHits,
+      hits,
+      MAXRESULTS
     } = this.state;
+
+    // trim results down to max allowed by state
+    const Results = hits.slice(0, MAXRESULTS)
+      // use results helper to change array items
+      .map((result) => this.imageResultsHelper(result))
+      .map(({ imgURL, title }, i) => (
+        <div className="result-pane" key={i}>
+          <img className="thumbnail" src={imgURL} alt="Trulli" />
+          <span className="support-text">{title}</span>
+        </div>
+      ));
 
     return (
       <Pane
@@ -70,7 +132,8 @@ class Search extends Component {
         <h1 className="search-pane-title">Begin your journey</h1>
         <h2 className="search-pane-subtitle">
           {quote} - {author}
-          &nbsp;<Button
+          &nbsp;
+          <Button
             onClick={this.setQuote}
             appearance="primary"
           >
@@ -86,6 +149,14 @@ class Search extends Component {
             value={searchValue}
             onChange={this.searchInputChange}
           />
+        </div>
+        <div className="results-count">
+          Showing {totalHits} results...
+        </div>
+        <div className="results">
+          <ul>
+            {Results}
+          </ul>
         </div>
       </Pane>
     );
