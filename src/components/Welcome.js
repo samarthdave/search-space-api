@@ -15,7 +15,7 @@ function Welcome(props) {
       flexDirection="column"
       alignItems="center"
       justifyContent="center"
-      border="muted"
+      border="extraMuted"
     >
       <h1 className="jumbotron-title">SearchSpace <FontAwesomeIcon icon={faSpaceShuttle} /></h1>
       <h2 className="jumbotron-subtitle">Explore within and search beyond</h2>
