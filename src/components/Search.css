@@ -74,6 +74,11 @@ h2 {
   text-align: center!important;
   display: block;
   color: #333;
+  font-size: 1rem;
+}
+/* make the team/org description smaller */
+.secondary-text {
+  font-size: 0.7rem;
 }
 
 /* style counter */

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Pane, Button, Icon, SearchInput } from 'evergreen-ui';
+import { Pane, Button, Icon, SearchInput, Dialog } from 'evergreen-ui';
 import Quote from 'inspirational-quotes';
 
 import { NasaAPI } from '../api';
@@ -15,14 +15,18 @@ class Search extends Component {
       searchValue: '',
       totalHits: 0,
       hits: [],
-      MAXRESULTS: 10
+      MAXRESULTS: 10,
+      showDialogBox: false,
+      dialogText: ''
     };
 
     // put methods into current context
     this.setQuote = this.setQuote.bind(this);
     this.searchInputChange = this.searchInputChange.bind(this);
     this.updateSearchResults = this.updateSearchResults.bind(this);
+    this.handleImageClick = this.handleImageClick.bind(this);
 
+    // temporary addition for testing
     this.updateSearchResults('rover');
   }
 
@@ -48,7 +52,6 @@ class Search extends Component {
 
   async updateSearchResults(query) {
     // if user removes all input
-    console.log(query, query.length, query.length===0)
     if(query.length === 0) {
       this.setState({
         hits: [],
@@ -56,10 +59,12 @@ class Search extends Component {
       });
       return;
     }
+    // await json response after ensuring clear input
     const response = await NasaAPI.search(query);
     
+    // set default values
     let hits = [];
-    let totalHits = -4;
+    let totalHits = 0;
 
     if(response.status === 200) {
       totalHits = response.data.collection.metadata.total_hits;
@@ -86,10 +91,17 @@ class Search extends Component {
   imageResultsHelper(hit) {
     // validate imgURL ref value or default to ''
     let imgURL = '';
+    // find an image in the response
     if(hit.links) {
       imgURL = hit.links[0].href;
     } else if(hit.data && hit.data[0].href) {
       imgURL = hit.data[0].href;
+    }
+
+    // refine for secondary
+    let secondaryText = '';
+    if(hit.data[0] && hit.data[0].secondary_creator) {
+      secondaryText = hit.data[0].secondary_creator;
     }
     // validate title value
     let title = '';
@@ -97,10 +109,24 @@ class Search extends Component {
       // cut title off at 30 characters
       title = hit.data[0].title.slice(0,30);
     }
+
     return {
       imgURL,
-      title
+      title,
+      secondaryText
     };
+  }
+
+  handleImageClick(loc) {
+    const { totalHits, hits } = this.state;
+    if(loc < totalHits-1) {
+      // extract title from result input
+      const { title } = this.imageResultsHelper(hits[loc]);
+      this.setState({
+        showDialogBox: true,
+        dialogText: title
+      });
+    }
   }
 
   render() {
@@ -110,17 +136,20 @@ class Search extends Component {
       searchValue,
       totalHits,
       hits,
-      MAXRESULTS
+      MAXRESULTS,
+      showDialogBox,
+      dialogText
     } = this.state;
 
     // trim results down to max allowed by state
     const Results = hits.slice(0, MAXRESULTS)
       // use results helper to change array items
       .map((result) => this.imageResultsHelper(result))
-      .map(({ imgURL, title }, i) => (
-        <div className="result-pane" key={i}>
+      .map(({ imgURL, title, secondaryText }, i) => (
+        <div className="result-pane" key={i} onClick={() => this.handleImageClick(i)}>
           <img className="thumbnail" src={imgURL} alt="Trulli" />
           <span className="support-text">{title}</span>
+          <span className="secondary-text">{secondaryText}</span>
         </div>
       ));
 
@@ -141,15 +170,11 @@ class Search extends Component {
           </Button>
         </h2>
         {/* surround Input w/styling div */}
-        <div className="search-input">
-          <SearchInput
-            width="100%"
-            height={40}
-            placeholder='Search for ... (e.g. "Mars")'
-            value={searchValue}
-            onChange={this.searchInputChange}
-          />
-        </div>
+        <SearchContainer
+          searchValue={searchValue}
+          onChange={this.searchInputChange}
+        />
+        {/* Show result count and images */}
         <div className="results-count">
           Showing {totalHits} results...
         </div>
@@ -158,9 +183,34 @@ class Search extends Component {
             {Results}
           </ul>
         </div>
+
+        {/* embed dialog at end of view */}
+        <Dialog
+          isShown={showDialogBox}
+          title="Danger intent"
+          intent="danger"
+          onCloseComplete={() => this.setState({ showDialogBox: false })}
+          confirmLabel="Delete Something"
+        >
+          {dialogText}
+        </Dialog>
       </Pane>
     );
   }
+}
+
+function SearchContainer({ searchValue, onChange }) {
+  return (
+    <div className="search-input">
+      <SearchInput
+        width="100%"
+        height={40}
+        placeholder='Search for ... (e.g. "Mars")'
+        value={searchValue}
+        onChange={onChange}
+      />
+    </div>
+  );
 }
 
 export default Search;
