@@ -3,6 +3,7 @@ import { Pane, Button, Icon, SearchInput, Dialog } from 'evergreen-ui';
 import Quote from 'inspirational-quotes';
 
 import { NasaAPI } from '../api';
+import utils from '../utils';
 
 import './Search.css';
 
@@ -14,9 +15,6 @@ class Search extends Component {
       searchValue: '',
       typing: false,
       typingTimeout: 0,
-      // quote generator
-      quote: '',
-      author: '',
       // ajax results stored here
       totalHits: 0,
       hits: [],
@@ -27,33 +25,12 @@ class Search extends Component {
     };
 
     // put methods into current context
-    this.setQuote = this.setQuote.bind(this);
     this.searchInputChange = this.searchInputChange.bind(this);
     this.updateSearchResults = this.updateSearchResults.bind(this);
     this.handleImageClick = this.handleImageClick.bind(this);
 
     // temporary addition for testing
     // this.updateSearchResults('rover');
-  }
-
-  componentWillMount() {
-    this.setQuote();
-  }
-
-  setQuote() {
-    let quote = '';
-    let author = '';
-
-    // loop through and select a quote that isn't too long
-    do {
-      // destructure and reassign
-      ({ text: quote, author } = Quote.getQuote());
-    } while (quote.length > 220);
-
-    this.setState({
-      quote,
-      author
-    });
   }
 
   async updateSearchResults(query) {
@@ -97,44 +74,15 @@ class Search extends Component {
       typing: false,
       typingTimeout: setTimeout(() => {
         this.updateSearchResults(searchValue);
-      }, 500)
+      }, 400)
     });
-  }
-
-  imageResultsHelper(hit) {
-    // validate imgURL ref value or default to ''
-    let imgURL = '';
-    // find an image in the response
-    if(hit.links) {
-      imgURL = hit.links[0].href;
-    } else if(hit.data && hit.data[0].href) {
-      imgURL = hit.data[0].href;
-    }
-
-    // refine for secondary
-    let secondaryText = '';
-    if(hit.data[0] && hit.data[0].secondary_creator) {
-      secondaryText = hit.data[0].secondary_creator;
-    }
-    // validate title value
-    let title = '';
-    if(hit.data) {
-      // cut title off at 30 characters
-      title = hit.data[0].title.slice(0,30);
-    }
-
-    return {
-      imgURL,
-      title,
-      secondaryText
-    };
   }
 
   handleImageClick(loc) {
     const { totalHits, hits } = this.state;
     if(loc < totalHits-1) {
       // extract title from result input
-      const { title } = this.imageResultsHelper(hits[loc]);
+      const { title } = utils.imageResultsHelper(hits[loc]);
       this.setState({
         showDialogBox: true,
         dialogText: title
@@ -144,8 +92,6 @@ class Search extends Component {
 
   render() {
     const {
-      quote,
-      author,
       searchValue,
       totalHits,
       hits,
@@ -157,7 +103,7 @@ class Search extends Component {
     // trim results down to max allowed by state
     const Results = hits.slice(0, MAXRESULTS)
       // use results helper to change array items
-      .map((result) => this.imageResultsHelper(result))
+      .map((result) => utils.imageResultsHelper(result))
       .map(({ imgURL, title, secondaryText }, i) => (
         <div className="result-pane" key={i} onClick={() => this.handleImageClick(i)}>
           <img className="thumbnail" src={imgURL} alt="Trulli" />
@@ -172,16 +118,7 @@ class Search extends Component {
         border="extraMuted"
       >
         <h1 className="search-pane-title">Begin your journey</h1>
-        <h2 className="search-pane-subtitle">
-          {quote} - {author}
-          &nbsp;
-          <Button
-            onClick={this.setQuote}
-            appearance="primary"
-          >
-            <Icon icon="refresh" />
-          </Button>
-        </h2>
+        <InspirationBlock />
         {/* surround Input w/styling div */}
         <SearchContainer
           searchValue={searchValue}
@@ -212,6 +149,51 @@ class Search extends Component {
   }
 }
 
+class InspirationBlock extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      quote: '',
+      author: ''
+    };
+    // bind to context
+    this.setQuote = this.setQuote.bind(this);
+  }
+  componentDidMount() {
+    this.setQuote();
+  }
+  setQuote() {
+    let quote = '';
+    let author = '';
+    // loop through and select a quote that isn't too long
+    do {
+      // destructure and reassign
+      ({ text: quote, author } = Quote.getQuote());
+    } while (quote.length > 220);
+
+    this.setState({
+      quote,
+      author
+    });
+  }
+
+  render() {
+    const { quote, author } = this.state;
+    return (
+      <h2 className="search-pane-subtitle">
+        {quote} - {author}
+        &nbsp;
+        <Button
+          onClick={this.setQuote}
+          appearance="primary"
+        >
+          <Icon icon="refresh" />
+        </Button>
+      </h2>
+    );
+  }
+}
+
 function SearchContainer({ searchValue, onChange }) {
   return (
     <div className="search-input">
@@ -221,6 +203,7 @@ function SearchContainer({ searchValue, onChange }) {
         placeholder='Search for ... (e.g. "Mars")'
         value={searchValue}
         onChange={onChange}
+        autoFocus
       />
     </div>
   );
