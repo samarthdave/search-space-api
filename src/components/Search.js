@@ -10,12 +10,18 @@ class Search extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      // search input latency before ajax request
+      searchValue: '',
+      typing: false,
+      typingTimeout: 0,
+      // quote generator
       quote: '',
       author: '',
-      searchValue: '',
+      // ajax results stored here
       totalHits: 0,
       hits: [],
       MAXRESULTS: 10,
+      // modal/dialog box setup
       showDialogBox: false,
       dialogText: ''
     };
@@ -27,7 +33,7 @@ class Search extends Component {
     this.handleImageClick = this.handleImageClick.bind(this);
 
     // temporary addition for testing
-    this.updateSearchResults('rover');
+    // this.updateSearchResults('rover');
   }
 
   componentWillMount() {
@@ -80,11 +86,18 @@ class Search extends Component {
   }
 
   searchInputChange(e) {
+    const { typingTimeout } = this.state;
+    if(typingTimeout) {
+      clearTimeout(typingTimeout);
+    }
+
     const searchValue = e.target.value;
     this.setState({
-      searchValue
-    }, () => { // do something after setState
-      this.updateSearchResults(searchValue);
+      searchValue,
+      typing: false,
+      typingTimeout: setTimeout(() => {
+        this.updateSearchResults(searchValue);
+      }, 500)
     });
   }
 
