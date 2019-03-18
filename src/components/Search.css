@@ -65,7 +65,8 @@ h2 {
 
 /* cap image size but keep aspect ratio */
 .thumbnail {
-  height: 150px;
+  max-height: 150px;
+  max-width: 800px;
   border-radius: 0.25rem;
 }
 

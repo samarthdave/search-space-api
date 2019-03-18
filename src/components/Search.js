@@ -101,7 +101,10 @@ class Search extends Component {
     } = this.state;
 
     // trim results down to max allowed by state
-    const Results = hits.slice(0, MAXRESULTS)
+    const trimmedResults = hits.slice(0, MAXRESULTS);
+    const displayedResults = trimmedResults.length;
+    // map into renderable component
+    const Results = trimmedResults
       // use results helper to change array items
       .map((result) => utils.imageResultsHelper(result))
       .map(({ imgURL, title, secondaryText }, i) => (
@@ -126,7 +129,7 @@ class Search extends Component {
         />
         {/* Show result count and images */}
         <div className="results-count">
-          Showing {totalHits} results...
+          Showing {displayedResults}/{totalHits} results...
         </div>
         <div className="results">
           <ul>
@@ -200,7 +203,7 @@ function SearchContainer({ searchValue, onChange }) {
       <SearchInput
         width="100%"
         height={40}
-        placeholder='Search for ... (e.g. "Mars")'
+        placeholder='Search for ... (e.g. "Rover")'
         value={searchValue}
         onChange={onChange}
         autoFocus

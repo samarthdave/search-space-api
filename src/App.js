@@ -15,7 +15,11 @@ class App extends Component {
         }
       }
     }
-  };
+  }
+
+  componentDidMount() {
+    document.title = 'SearchSpace - Explore within/search beyond';
+  }
 
   render() {
     // destructure variables from state
