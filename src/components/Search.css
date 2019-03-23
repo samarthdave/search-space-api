@@ -13,6 +13,8 @@
   overflow-y: auto;
   /* style all text with same font */
   font-family: 'Merriweather', sans-serif;
+  /* give navbar space when results show... */
+  margin-top: 50px;
 }
 
 .search-pane > h1,

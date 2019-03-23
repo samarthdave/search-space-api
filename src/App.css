@@ -25,3 +25,42 @@ a {
   justify-content: center;
   align-items: center;
 }
+
+.links {
+  margin: 0;
+  padding: 0;
+}
+/* navbar styling (stateless component) */
+.minimal-navbar {
+  position: absolute;
+  top: 0;
+
+  /* center similar to jumbotron */
+  width: 80%;
+  margin: 0 auto;
+}
+
+/* home anchor and other shortcuts */
+.nav-link {
+  display: inline-block;
+  padding: 3px 2px;
+  position: relative;
+  color: #fff;
+  font-family: 'Merriweather';
+  margin: 5px;
+  border: 1px solid transparent;
+  transition: border 0.3s;
+}
+/* if current page */
+.nav-link.active {
+  border-bottom: 1px solid #fff;
+}
+/* border with animation */
+.nav-link:hover {
+  border-bottom: 1px solid #fff;
+}
+/* refine nav-link properties */
+#gh-link {
+  cursor: pointer;
+  padding-top: 5px;
+}

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import MinimalNavbar from './components/MinimalNavbar';
+
 import './App.css';
 
 class App extends Component {
@@ -36,7 +38,7 @@ class App extends Component {
 
     return (
       <div className="App" style={appStyle}>
-        {/* <Navbar /> */}
+        <MinimalNavbar />
         {this.props.children}
       </div>
     );
