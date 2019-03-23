@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Pane, Button, Icon, SearchInput, Dialog } from 'evergreen-ui';
-import Quote from 'inspirational-quotes';
 
-import { NasaAPI } from '../api';
+import { NasaAPI, Quote } from '../api';
 import utils from '../utils';
 
 import './Search.css';
