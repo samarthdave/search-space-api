@@ -8,11 +8,11 @@ function randomInt(min,max) {
 
 export default {
   getRandomQuote: () => {
-    let index = randomInt(0,20);
+    let index = randomInt(0,23);
     return arr[index].text;
   },
   getQuote: (name) => {
-    let index = randomInt(0,20);
+    let index = randomInt(0,23);
     quote.text = arr[index].text;
     quote.author = arr[index].from;
     return quote;

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css?family=Merriweather|Raleway");
+@import url("https://fonts.googleapis.com/css?family=Merriweather|Raleway|Open+Sans");
 
 html,
 body,
@@ -6,12 +6,19 @@ body,
 .App {
   height: 100%;
   margin: 0;
+  overflow-y: auto;
 }
 
 /* Override ugly default anchor styling */
 a {
   text-decoration: none!important;
   color: inherit;
+}
+
+/* fix weird button underline bug on buttons */
+.css-nwvixr,
+.css-10aephz {
+  background-color: transparent!important;
 }
 
 .App {
@@ -34,7 +41,6 @@ a {
 .minimal-navbar {
   position: absolute;
   top: 0;
-
   /* center similar to jumbotron */
   width: 80%;
   margin: 0 auto;

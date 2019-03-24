@@ -1,7 +1,7 @@
 .search-pane {
   /* fallback background colors if rgba not supported */
   background: rgb(100, 100, 100);
-  background: rgba(150, 150, 150, 0.6);
+  background: rgba(150, 150, 150, 0.2);
   
   border-radius: 3px;
   width: 80%;
@@ -10,11 +10,10 @@
   padding-bottom: 20px;
   /* prevent box from overflowing */
   max-height: 95%;
-  overflow-y: auto;
   /* style all text with same font */
   font-family: 'Merriweather', sans-serif;
   /* give navbar space when results show... */
-  margin-top: 50px;
+  margin-top: 120px;
 }
 
 .search-pane > h1,
@@ -27,6 +26,7 @@ h2 {
 .search-pane-title {
   font-family: "Merriweather", sans-serif;
   margin-top: 20px;
+  margin-top: 10px;
   margin-bottom: 5px;
   font-size: 3rem;
 }
@@ -34,6 +34,8 @@ h2 {
 .search-pane-subtitle {
   margin-top: 5px;
   font-family: "Raleway", sans-serif;
+
+  font-weight: 100;
   padding: 0 10px;
 }
 
@@ -48,45 +50,72 @@ h2 {
   font-size: 1.2rem;
 }
 
-/* style container for image results */
-.result-pane {
-  display: inline-block;
-  margin: 0.5rem;
-  text-align: center;
-  background: #ddd;
-  padding: 5px;
-  border-radius: 5px;
-  cursor: pointer;
-  box-shadow: 0 0 1px #000, 0 2px 4px -2px #000;
-  transition: box-shadow 0.2s;
+/* list of all results */
+#results-list {
+  background: rgba(170, 170, 170, 0.4);
+  padding-top: 10px;
 }
 
-.result-pane:hover {
-  box-shadow: 0 0 1px #000, 0 10px 24px -8px #000;
+/* style container for all results */
+.results-pane {
+  height: 400px;
+}
+/* style container for each result */
+.result-pane {
+  display: inline-block;
+  margin: 0.2rem 0.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* style image inside pane with drop shadow */
+.result-pane img {
+  box-shadow: 0 0 2px #000;
+  transition: box-shadow 0.2s;
+  display: block;
+  margin: 0 auto;
+}
+
+.result-pane img:hover {
+  box-shadow: 0 0 10px #000, 0 5px 10px #000;
+}
+
+.result-pane figure {
+  padding: 5px;
+}
+/* add background to each image  */
+.result-pane figcaption {
+  font-family: 'Open Sans', sans-serif;
+  color: #fff;
+  background: rgb(0,0,0);
+  background: rgba(0,0,0,0.5);
+  padding: 5px;
+  border-radius: 2px;
+  margin-top: 3px;
 }
 
 /* cap image size but keep aspect ratio */
 .thumbnail {
   max-height: 150px;
-  max-width: 800px;
   border-radius: 0.25rem;
 }
 
-/* edit caption (support-text) */
-.support-text {
-  text-align: center!important;
-  display: block;
-  color: #333;
-  font-size: 1rem;
-}
-/* make the team/org description smaller */
-.secondary-text {
-  font-size: 0.7rem;
+/* add attached text */
+.attached-text {
+  position: relative;
+  top: 0;
+  left: 0;
 }
 
 /* style counter */
 .results-count {
   color: #fff;
-  margin: 1rem auto;
+  font-family: "Merriweather", sans-serif;
+  margin: 10px auto 0 auto;
   width: 80%;
+}
+
+.results-count button {
+  font-size: 18px;
+  font-family: "Merriweather", sans-serif;
 }

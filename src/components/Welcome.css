@@ -1,7 +1,7 @@
 .jumbotron {
   /* fallback background colors if rgba not supported */
   background: rgb(100, 100, 100);
-  background: rgba(150, 150, 150, 0.6);
+  background: rgba(150, 150, 150, 0.2);
 
   border-radius: 3px;
   width: 60%;

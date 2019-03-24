@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Pane, Button, Icon, SearchInput, Dialog } from 'evergreen-ui';
+import { Pane, Button, Icon, SearchInput, Dialog, Badge } from 'evergreen-ui';
 
-import { NasaAPI, Quote } from '../api';
+import { NasaAPI } from '../api';
+import InspirationBlock from './InspirationBlock';
 import utils from '../utils';
 
 import './Search.css';
@@ -17,7 +18,7 @@ class Search extends Component {
       // ajax results stored here
       totalHits: 0,
       hits: [],
-      MAXRESULTS: 10,
+      MAXRESULTS: 20,
       // modal/dialog box setup
       showDialogBox: false,
       dialogText: ''
@@ -29,7 +30,7 @@ class Search extends Component {
     this.handleImageClick = this.handleImageClick.bind(this);
 
     // temporary addition for testing
-    // this.updateSearchResults('rover');
+    // this.updateSearchResults('Earth');
   }
 
   async updateSearchResults(query) {
@@ -68,6 +69,7 @@ class Search extends Component {
     }
 
     const searchValue = e.target.value;
+    // create 400 ms difference from typing to ajax request
     this.setState({
       searchValue,
       typing: false,
@@ -79,9 +81,11 @@ class Search extends Component {
 
   handleImageClick(loc) {
     const { totalHits, hits } = this.state;
+    // if valid location
     if(loc < totalHits-1) {
       // extract title from result input
       const { title } = utils.imageResultsHelper(hits[loc]);
+      // grab data from helper and inject into dialog box
       this.setState({
         showDialogBox: true,
         dialogText: title
@@ -102,19 +106,10 @@ class Search extends Component {
     // trim results down to max allowed by state
     const trimmedResults = hits.slice(0, MAXRESULTS);
     const displayedResults = trimmedResults.length;
-    // map into renderable component
-    const Results = trimmedResults
-      // use results helper to change array items
-      .map((result) => utils.imageResultsHelper(result))
-      .map(({ imgURL, title, secondaryText }, i) => (
-        <div className="result-pane" key={i} onClick={() => this.handleImageClick(i)}>
-          <img className="thumbnail" src={imgURL} alt="Trulli" />
-          <span className="support-text">{title}</span>
-          <span className="secondary-text">{secondaryText}</span>
-        </div>
-      ));
-
-    return (
+    // setup props for result item
+    const resultsPaneProps = { MAXRESULTS, hits, trimmedResults };
+    
+    return [
       <Pane
         className="search-pane"
         border="extraMuted"
@@ -127,14 +122,7 @@ class Search extends Component {
           onChange={this.searchInputChange}
         />
         {/* Show result count and images */}
-        <div className="results-count">
-          Showing {displayedResults}/{totalHits} results...
-        </div>
-        <div className="results">
-          <ul>
-            {Results}
-          </ul>
-        </div>
+        <ResultsCounter displayedResults={displayedResults} totalHits={totalHits} />
 
         {/* embed dialog at end of view */}
         <Dialog
@@ -147,53 +135,72 @@ class Search extends Component {
           {dialogText}
         </Dialog>
       </Pane>
-    );
+    ,
+      <ResultsPane {...resultsPaneProps} />
+    ];
   }
 }
 
-class InspirationBlock extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      quote: '',
-      author: ''
-    };
-    // bind to context
-    this.setQuote = this.setQuote.bind(this);
-  }
-  componentDidMount() {
-    this.setQuote();
-  }
-  setQuote() {
-    let quote = '';
-    let author = '';
-    // loop through and select a quote that isn't too long
-    do {
-      // destructure and reassign
-      ({ text: quote, author } = Quote.getQuote());
-    } while (quote.length > 220);
-
-    this.setState({
-      quote,
-      author
+function ResultsPane({ trimmedResults, MAXRESULTS }) {
+  // map into renderable component
+  const respectiveBadges = trimmedResults
+    // use utils to return array for each result
+    .map((result) => utils.getBadges(result))
+    // replace each with a badge
+    .map((tagsList) => {
+      return tagsList // map and return a badge for each
+        .map((badgeString) => (
+          <Badge color="neutral" isSolid marginRight={8}>{badgeString}</Badge>
+        ));
     });
-  }
+  
+  const formattedArray = trimmedResults
+    // use results helper to change array items
+    .map((result) => utils.imageResultsHelper(result))
+    .map(({ imgURL, title, secondaryText }, i) => (
+      <figure className="result-pane" key={i} onClick={() => this.handleImageClick(i)}>
+        <img className="thumbnail" src={imgURL} alt={secondaryText} />
+        <figcaption>
+          {title}
+          <br/>
+          {respectiveBadges[i]}
+        </figcaption>
+      </figure>
+    ));
 
-  render() {
-    const { quote, author } = this.state;
-    return (
-      <h2 className="search-pane-subtitle">
-        {quote} - {author}
-        &nbsp;
+  // determine if display none needs to be added
+  const shouldShowEmpty = formattedArray.length === 0;
+  const resultsStyle = {
+    display: shouldShowEmpty ? 'none' : 'block'
+  };
+  return (
+    <Pane
+      className="results-pane"
+      border="extraMuted">
+      <ul id="results-list" style={resultsStyle}>
+        {formattedArray}
+      </ul>
+    </Pane>
+  );
+}
+
+function ResultsCounter({ totalHits, displayedResults }) {
+  return (
+    <div className="results-count">
+      { totalHits > 0 ?
         <Button
-          onClick={this.setQuote}
           appearance="primary"
+          intent="success"
         >
-          <Icon icon="refresh" />
-        </Button>
-      </h2>
-    );
-  }
+          <Icon icon="filter" size={20} />
+          &nbsp;
+          Filter
+        </Button>: ''
+      }
+      &nbsp;
+      Showing {displayedResults}/{totalHits} results...
+    </div>
+  );
 }
 
 function SearchContainer({ searchValue, onChange }) {

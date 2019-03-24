@@ -5,12 +5,13 @@ import MinimalNavbar from './components/MinimalNavbar';
 import './App.css';
 
 class App extends Component {
-  // set state with background image using CommonJS
+  // use state for background image using CommonJS
   state = {
     currentBackgroundImage: require('./media/background-min.png'),
     currentImage: 'index',
     imageList: {
       index: {
+        // attach styling to state in case of change
         relativeLocation: './media/background-min.png',
         stylePreferences: {
           backgroundSize: 'cover'
