@@ -119,3 +119,10 @@ h2 {
   font-size: 18px;
   font-family: "Merriweather", sans-serif;
 }
+
+/* style image inside popup */
+.dialog-img {
+  display: block;
+  margin: 0 auto;
+  max-height: 300px;
+}

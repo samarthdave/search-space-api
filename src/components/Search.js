@@ -21,16 +21,18 @@ class Search extends Component {
       MAXRESULTS: 20,
       // modal/dialog box setup
       showDialogBox: false,
-      dialogText: ''
+      // current image data
+      currentImage: {}
     };
 
     // put methods into current context
     this.searchInputChange = this.searchInputChange.bind(this);
     this.updateSearchResults = this.updateSearchResults.bind(this);
     this.handleImageClick = this.handleImageClick.bind(this);
+    this.downloadCurrentImage = this.downloadCurrentImage.bind(this);
 
     // temporary addition for testing
-    // this.updateSearchResults('Earth');
+    this.updateSearchResults('Earth');
   }
 
   async updateSearchResults(query) {
@@ -49,6 +51,7 @@ class Search extends Component {
     let hits = [];
     let totalHits = 0;
 
+    // if okay response
     if(response.status === 200) {
       totalHits = response.data.collection.metadata.total_hits;
       if(totalHits !== 0) {
@@ -83,14 +86,17 @@ class Search extends Component {
     const { totalHits, hits } = this.state;
     // if valid location
     if(loc < totalHits-1) {
-      // extract title from result input
-      const { title } = utils.imageResultsHelper(hits[loc]);
       // grab data from helper and inject into dialog box
+      const currentImage = utils.imageResultsHelper(hits[loc]);
+      console.log(currentImage);
       this.setState({
         showDialogBox: true,
-        dialogText: title
+        currentImage
       });
     }
+  }
+
+  downloadCurrentImage() {
   }
 
   render() {
@@ -100,14 +106,28 @@ class Search extends Component {
       hits,
       MAXRESULTS,
       showDialogBox,
-      dialogText
+      currentImage
     } = this.state;
 
     // trim results down to max allowed by state
     const trimmedResults = hits.slice(0, MAXRESULTS);
     const displayedResults = trimmedResults.length;
     // setup props for result item
-    const resultsPaneProps = { MAXRESULTS, hits, trimmedResults };
+    const resultsPaneProps = {
+      MAXRESULTS,
+      hits,
+      trimmedResults,
+      handleImageClick: this.handleImageClick
+    };
+
+    const dialogBoxProps = {
+      currentImage,
+      isShown: showDialogBox,
+      onCloseComplete: () => this.setState({ showDialogBox: false }),
+      confirmLabel: "Download",
+      cancelLabel: "Close",
+      onConfirm: this.downloadCurrentImage,
+    };
     
     return [
       <Pane
@@ -115,6 +135,7 @@ class Search extends Component {
         border="extraMuted"
       >
         <h1 className="search-pane-title">Begin your journey</h1>
+
         <InspirationBlock />
         {/* surround Input w/styling div */}
         <SearchContainer
@@ -125,15 +146,7 @@ class Search extends Component {
         <ResultsCounter displayedResults={displayedResults} totalHits={totalHits} />
 
         {/* embed dialog at end of view */}
-        <Dialog
-          isShown={showDialogBox}
-          title="Danger intent"
-          intent="danger"
-          onCloseComplete={() => this.setState({ showDialogBox: false })}
-          confirmLabel="Delete Something"
-        >
-          {dialogText}
-        </Dialog>
+        <DialogBox {...dialogBoxProps} />
       </Pane>
     ,
       <ResultsPane {...resultsPaneProps} />
@@ -141,7 +154,42 @@ class Search extends Component {
   }
 }
 
-function ResultsPane({ trimmedResults, MAXRESULTS }) {
+function DialogBox(props) {
+  const {
+    currentImage
+  } = props;
+
+  console.log(currentImage)
+  if(!currentImage) {
+    return null;
+  }
+
+  const {
+    imgURL,
+    fullTitle,
+    secondaryText,
+    description,
+    nasa_id
+   } = currentImage;
+
+  console.log(currentImage);
+  return (
+    <Dialog
+      {...props}
+      title={fullTitle}
+      width={700}
+    >
+      <img className="dialog-img" src={imgURL} alt={secondaryText} />
+      <p className="dialog-info">
+        <Badge color="green" marginRight={8}>ID: {nasa_id}</Badge>
+        <h4></h4>
+        {description}
+      </p>
+    </Dialog>
+  );
+}
+
+function ResultsPane({ trimmedResults, handleImageClick }) {
   // map into renderable component
   const respectiveBadges = trimmedResults
     // use utils to return array for each result
@@ -158,7 +206,10 @@ function ResultsPane({ trimmedResults, MAXRESULTS }) {
     // use results helper to change array items
     .map((result) => utils.imageResultsHelper(result))
     .map(({ imgURL, title, secondaryText }, i) => (
-      <figure className="result-pane" key={i} onClick={() => this.handleImageClick(i)}>
+      <figure
+        className="result-pane" key={i}
+        onClick={() => handleImageClick(i)}
+      >
         <img className="thumbnail" src={imgURL} alt={secondaryText} />
         <figcaption>
           {title}

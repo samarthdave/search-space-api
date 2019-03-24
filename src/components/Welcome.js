@@ -17,8 +17,9 @@ function Welcome(props) {
       justifyContent="center"
       border="extraMuted"
     >
-      <h1 className="jumbotron-title">SearchSpace <FontAwesomeIcon icon={faSpaceShuttle} /></h1>
-      <h2 className="jumbotron-subtitle">Explore within and search beyond</h2>
+      <h1 id="jumbotron-title">SearchSpace <FontAwesomeIcon icon={faSpaceShuttle} /></h1>
+      <h2 id="jumbotron-subtitle">Explore within and search beyond</h2>
+      <h3 id="jumbotron-helper">Search NASA's beautiful repository of images</h3>
       
       <Button
         appearance="primary"

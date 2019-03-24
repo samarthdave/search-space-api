@@ -1,4 +1,7 @@
 const imageResultsHelper = (hit) => {
+  if(!hit.data) {
+    return 0;
+  }
   // validate imgURL ref value or default to ''
   let imgURL = '';
   // find an image in the response
@@ -10,8 +13,13 @@ const imageResultsHelper = (hit) => {
 
   // refine for secondary
   let secondaryText = '';
+  let allData;
   if(hit.data[0] && hit.data[0].secondary_creator) {
     secondaryText = hit.data[0].secondary_creator;
+  }
+
+  if(hit.data[0]) {
+    allData = hit.data[0];
   }
   // validate title value
   let title = '';
@@ -23,10 +31,18 @@ const imageResultsHelper = (hit) => {
     title = hit.data[0].title.slice(0,30);
   }
 
+  // parse date input
+  let date_created;
+  if(allData.date_created) {
+    date_created = new Date(allData.date_created);
+  }
+
   return {
+    ...allData,
     imgURL,
     fullTitle,
     title,
+    date_created,
     secondaryText
   };
 };
@@ -49,7 +65,9 @@ const getBadges = (hit) => {
         keyword = keyword.slice(0, 25) + '...';
       }
       return keyword;
-    });
+    })
+    // trim results down to max of 5 labels
+    .slice(0,5);
 
   return keywords;
 };

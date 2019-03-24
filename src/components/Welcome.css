@@ -10,18 +10,23 @@
   padding-bottom: 20px;
 }
 
-.jumbotron > h1,
-h2 {
+h1,
+h2,
+h3 {
   text-align: center;
   color: #fff;
 }
 
-.jumbotron-title {
+#jumbotron-title {
   font-family: "Merriweather", sans-serif;
   margin-bottom: 5px;
   font-size: 3rem;
 }
-.jumbotron-subtitle {
-  margin-top: 5px;
+#jumbotron-subtitle {
+  margin: 5px 0;
   font-family: "Raleway", sans-serif;
+}
+#jumbotron-helper {
+  margin-top: 5px;
+  font-family: "Open Sans", sans-serif;
 }
