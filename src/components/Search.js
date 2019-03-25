@@ -24,7 +24,9 @@ class Search extends Component {
       // current image data
       currentImage: {},
       // add filter state items
-      filterLocations: [] // max one location
+      filterLocations: [], // max one location
+      yearStart: '',
+      yearEnd: ''
     };
 
     // put methods into current context
@@ -34,14 +36,23 @@ class Search extends Component {
     this.downloadCurrentImage = this.downloadCurrentImage.bind(this);
     this.loadMoreResults = this.loadMoreResults.bind(this);
     this.addFilterLocation = this.addFilterLocation.bind(this);
+    this.updateWithFilters = this.updateWithFilters.bind(this);
 
     // temporary addition for testing
-    // this.updateSearchResults('Earth');
+    this.updateSearchResults('Earth');
   }
 
   async updateSearchResults(query) {
+    // grab state values to use for query
+    const {
+      filterLocations,
+      yearStart,
+      yearEnd
+    } = this.state;
+    // determines if any filter is in use
+    const filtersUsed = filterLocations.length > 0 || yearStart !== '' || yearEnd !== '';
     // if user removes all input
-    if(query.length === 0) {
+    if(query.length === 0 && !filtersUsed) {
       this.setState({
         hits: [],
         totalHits: 0
@@ -49,7 +60,7 @@ class Search extends Component {
       return;
     }
     // await json response after ensuring clear input
-    const response = await NasaAPI.search(query);
+    const response = await NasaAPI.search(query, filterLocations, yearStart, yearEnd);
     
     // set default values
     let hits = [];
@@ -99,7 +110,7 @@ class Search extends Component {
     }
   }
 
-  downloadCurrentImage(i) {
+  downloadCurrentImage() {
     const { currentImage } = this.state;
     const imageURL = utils.getImageURL(currentImage);
     let win = window.open(imageURL, '_blank');
@@ -125,6 +136,11 @@ class Search extends Component {
     this.setState({
       filterLocations: values
     });
+  }
+
+  updateWithFilters() {
+    const { searchValue } = this.state;
+    this.updateSearchResults(searchValue);
   }
 
   render() {
@@ -163,7 +179,8 @@ class Search extends Component {
       displayedResults: displayedResults,
       totalHits: totalHits,
       filterLocations,
-      addFilterLocation: this.addFilterLocation
+      addFilterLocation: this.addFilterLocation,
+      updateWithFilters: this.updateWithFilters
     };
     
     return [
@@ -196,14 +213,15 @@ function ResultsCounter(props) {
     totalHits,
     displayedResults,
     addFilterLocation,
-    filterLocations
+    filterLocations,
+    updateWithFilters
   } = props;
 
   const allowInput = false;
   
   const FilterButton = (
     <Popover
-      // onClose={updateWithFilters}
+      onClose={updateWithFilters}
       content={
         <Pane
           width={320}
