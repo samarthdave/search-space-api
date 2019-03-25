@@ -126,3 +126,9 @@ h2 {
   margin: 0 auto;
   max-height: 300px;
 }
+
+.load-more-btn {
+  display: block;
+  margin: 10px auto;
+  font-size: 2em;
+}

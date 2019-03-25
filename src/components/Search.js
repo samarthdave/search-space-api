@@ -30,6 +30,7 @@ class Search extends Component {
     this.updateSearchResults = this.updateSearchResults.bind(this);
     this.handleImageClick = this.handleImageClick.bind(this);
     this.downloadCurrentImage = this.downloadCurrentImage.bind(this);
+    this.loadMoreResults = this.loadMoreResults.bind(this);
 
     // temporary addition for testing
     this.updateSearchResults('Earth');
@@ -88,7 +89,6 @@ class Search extends Component {
     if(loc < totalHits-1) {
       // grab data from helper and inject into dialog box
       const currentImage = utils.imageResultsHelper(hits[loc]);
-      console.log(currentImage);
       this.setState({
         showDialogBox: true,
         currentImage
@@ -97,6 +97,18 @@ class Search extends Component {
   }
 
   downloadCurrentImage() {
+  }
+
+  loadMoreResults() {
+    if(this.state.MAXRESULTS > this.state.hits.length) {
+      return;
+    }
+    // use functional set state for adding to list
+    this.setState((prevState) => {
+      return {
+        MAXRESULTS: prevState.MAXRESULTS + 10
+      };
+    });
   }
 
   render() {
@@ -117,7 +129,8 @@ class Search extends Component {
       MAXRESULTS,
       hits,
       trimmedResults,
-      handleImageClick: this.handleImageClick
+      handleImageClick: this.handleImageClick,
+      loadMoreResults: this.loadMoreResults
     };
 
     const dialogBoxProps = {
@@ -159,7 +172,6 @@ function DialogBox(props) {
     currentImage
   } = props;
 
-  console.log(currentImage)
   if(!currentImage) {
     return null;
   }
@@ -172,7 +184,6 @@ function DialogBox(props) {
     nasa_id
    } = currentImage;
 
-  console.log(currentImage);
   return (
     <Dialog
       {...props}
@@ -182,14 +193,14 @@ function DialogBox(props) {
       <img className="dialog-img" src={imgURL} alt={secondaryText} />
       <p className="dialog-info">
         <Badge color="green" marginRight={8}>ID: {nasa_id}</Badge>
-        <h4></h4>
+        <h4>Placeholder text</h4>
         {description}
       </p>
     </Dialog>
   );
 }
 
-function ResultsPane({ trimmedResults, handleImageClick }) {
+function ResultsPane({ trimmedResults, handleImageClick, loadMoreResults }) {
   // map into renderable component
   const respectiveBadges = trimmedResults
     // use utils to return array for each result
@@ -230,7 +241,19 @@ function ResultsPane({ trimmedResults, handleImageClick }) {
       border="extraMuted">
       <ul id="results-list" style={resultsStyle}>
         {formattedArray}
+        <br/>
+        <Button
+          className="load-more-btn"
+          size={40}
+          appearance="primary"
+          intent="success"
+          onClick={loadMoreResults}
+        >
+          Load More
+        </Button>
+        <br/>
       </ul>
+      {/* load 10 more results with pagination button */}
     </Pane>
   );
 }
