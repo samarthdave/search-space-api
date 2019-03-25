@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Pane, Button, Icon, SearchInput, Dialog, Badge } from 'evergreen-ui';
+import { Pane, Button, Icon, SearchInput, Dialog, Badge, Popover, TagInput } from 'evergreen-ui';
 
 import { NasaAPI } from '../api';
 import InspirationBlock from './InspirationBlock';
@@ -22,7 +22,9 @@ class Search extends Component {
       // modal/dialog box setup
       showDialogBox: false,
       // current image data
-      currentImage: {}
+      currentImage: {},
+      // add filter state items
+      filterLocations: [] // max one location
     };
 
     // put methods into current context
@@ -31,9 +33,10 @@ class Search extends Component {
     this.handleImageClick = this.handleImageClick.bind(this);
     this.downloadCurrentImage = this.downloadCurrentImage.bind(this);
     this.loadMoreResults = this.loadMoreResults.bind(this);
+    this.addFilterLocation = this.addFilterLocation.bind(this);
 
     // temporary addition for testing
-    this.updateSearchResults('Earth');
+    // this.updateSearchResults('Earth');
   }
 
   async updateSearchResults(query) {
@@ -96,7 +99,11 @@ class Search extends Component {
     }
   }
 
-  downloadCurrentImage() {
+  downloadCurrentImage(i) {
+    const { currentImage } = this.state;
+    const imageURL = utils.getImageURL(currentImage);
+    let win = window.open(imageURL, '_blank');
+    win.focus();
   }
 
   loadMoreResults() {
@@ -111,6 +118,15 @@ class Search extends Component {
     });
   }
 
+  addFilterLocation(values) {
+    if(values.length > 1) {
+      return;
+    }
+    this.setState({
+      filterLocations: values
+    });
+  }
+
   render() {
     const {
       searchValue,
@@ -118,7 +134,8 @@ class Search extends Component {
       hits,
       MAXRESULTS,
       showDialogBox,
-      currentImage
+      currentImage,
+      filterLocations
     } = this.state;
 
     // trim results down to max allowed by state
@@ -137,9 +154,16 @@ class Search extends Component {
       currentImage,
       isShown: showDialogBox,
       onCloseComplete: () => this.setState({ showDialogBox: false }),
-      confirmLabel: "Download",
+      confirmLabel: "Download (new tab)",
       cancelLabel: "Close",
       onConfirm: this.downloadCurrentImage,
+    };
+
+    const resultsCounterProps = {
+      displayedResults: displayedResults,
+      totalHits: totalHits,
+      filterLocations,
+      addFilterLocation: this.addFilterLocation
     };
     
     return [
@@ -156,7 +180,7 @@ class Search extends Component {
           onChange={this.searchInputChange}
         />
         {/* Show result count and images */}
-        <ResultsCounter displayedResults={displayedResults} totalHits={totalHits} />
+        <ResultsCounter {...resultsCounterProps} />
 
         {/* embed dialog at end of view */}
         <DialogBox {...dialogBoxProps} />
@@ -165,6 +189,62 @@ class Search extends Component {
       <ResultsPane {...resultsPaneProps} />
     ];
   }
+}
+
+function ResultsCounter(props) {
+  const {
+    totalHits,
+    displayedResults,
+    addFilterLocation,
+    filterLocations
+  } = props;
+
+  const allowInput = false;
+  
+  const FilterButton = (
+    <Popover
+      // onClose={updateWithFilters}
+      content={
+        <Pane
+          width={320}
+          height={320}
+          padding={15}
+          display="flex"
+          className="filter-pane"
+        >
+          <div className="filter-hits">
+            Location (max 1 item)
+            <br />
+            <TagInput
+              disabled={allowInput}
+              height={40}
+              inputProps={{ placeholder: 'Mars, New York...' }}
+              values={filterLocations}
+              onChange={addFilterLocation}
+            />
+          </div>
+        </Pane>
+      }
+    >
+      <Button
+        appearance="primary"
+        intent="success"
+      >
+        <Icon icon="filter" size={20} />
+        &nbsp;
+        Filter
+      </Button>
+    </Popover>
+  );
+  return (
+    <div className="results-count">
+      { totalHits > 0 ?
+        FilterButton : ''
+      }
+      &nbsp;
+      Showing {displayedResults}/{totalHits} results...
+    </div>
+  );
 }
 
 function DialogBox(props) {
@@ -191,11 +271,11 @@ function DialogBox(props) {
       width={700}
     >
       <img className="dialog-img" src={imgURL} alt={secondaryText} />
-      <p className="dialog-info">
+      <div className="dialog-info">
         <Badge color="green" marginRight={8}>ID: {nasa_id}</Badge>
         <h4>Placeholder text</h4>
         {description}
-      </p>
+      </div>
     </Dialog>
   );
 }
@@ -244,7 +324,6 @@ function ResultsPane({ trimmedResults, handleImageClick, loadMoreResults }) {
         <br/>
         <Button
           className="load-more-btn"
-          size={40}
           appearance="primary"
           intent="success"
           onClick={loadMoreResults}
@@ -255,25 +334,6 @@ function ResultsPane({ trimmedResults, handleImageClick, loadMoreResults }) {
       </ul>
       {/* load 10 more results with pagination button */}
     </Pane>
-  );
-}
-
-function ResultsCounter({ totalHits, displayedResults }) {
-  return (
-    <div className="results-count">
-      { totalHits > 0 ?
-        <Button
-          appearance="primary"
-          intent="success"
-        >
-          <Icon icon="filter" size={20} />
-          &nbsp;
-          Filter
-        </Button>: ''
-      }
-      &nbsp;
-      Showing {displayedResults}/{totalHits} results...
-    </div>
   );
 }
 

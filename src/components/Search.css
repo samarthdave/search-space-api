@@ -132,3 +132,18 @@ h2 {
   margin: 10px auto;
   font-size: 2em;
 }
+
+/*  */
+/* FILTER */
+/* classes to filter by categories */
+/*  */
+
+/* popover is the container of filter pane */
+.css-h45qep {
+  background: rgba(0,0,0);
+  background: rgba(0, 0, 0, 0.9);
+}
+.filter-pane {
+  font-family: 'Merriweather', sans-serif;
+  color: #fff;
+}

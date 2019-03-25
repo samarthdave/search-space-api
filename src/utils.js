@@ -72,7 +72,21 @@ const getBadges = (hit) => {
   return keywords;
 };
 
+const getImageURL = (hit) => {
+  if(hit.imageURL) {
+    return hit.imageURL;
+  }
+  if(hit.links) {
+    return hit.links[0].href;
+  } else if(hit.data && hit.data[0].href) {
+    return hit.data[0].href;
+  }
+  // backup just in case
+  return 'https://searchspace.surge.sh/static/media/background-min.2558a1d1.png';
+};
+
 export default {
   imageResultsHelper,
-  getBadges
+  getBadges,
+  getImageURL
 }
