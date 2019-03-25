@@ -1,5 +1,15 @@
 import React, { Component } from 'react';
-import { Pane, Button, Icon, SearchInput, Dialog, Badge, Popover, TagInput } from 'evergreen-ui';
+import {
+  Pane,
+  Button,
+  Icon,
+  SearchInput,
+  Dialog,
+  Badge,
+  Popover,
+  TagInput,
+  TextInput
+} from 'evergreen-ui'; // so.many.imports
 
 import { NasaAPI } from '../api';
 import InspirationBlock from './InspirationBlock';
@@ -37,9 +47,11 @@ class Search extends Component {
     this.loadMoreResults = this.loadMoreResults.bind(this);
     this.addFilterLocation = this.addFilterLocation.bind(this);
     this.updateWithFilters = this.updateWithFilters.bind(this);
+    this.updateYearStart = this.updateYearStart.bind(this);
+    this.updateYearEnd = this.updateYearEnd.bind(this);
 
     // temporary addition for testing
-    this.updateSearchResults('Earth');
+    // this.updateSearchResults('Earth');
   }
 
   async updateSearchResults(query) {
@@ -138,6 +150,24 @@ class Search extends Component {
     });
   }
 
+  updateYearStart(e) {
+    const yearStart = e.target.value;
+    if(!isNaN(parseInt(yearStart)) || yearStart === '') {
+      this.setState({
+        yearStart
+      });
+    }
+  }
+
+  updateYearEnd(e) {
+    const yearEnd = e.target.value;
+    if(!isNaN(parseInt(yearEnd))|| yearEnd === '') {
+      this.setState({
+        yearEnd
+      });
+    }
+  }
+
   updateWithFilters() {
     const { searchValue } = this.state;
     this.updateSearchResults(searchValue);
@@ -151,7 +181,9 @@ class Search extends Component {
       MAXRESULTS,
       showDialogBox,
       currentImage,
-      filterLocations
+      filterLocations,
+      yearStart,
+      yearEnd
     } = this.state;
 
     // trim results down to max allowed by state
@@ -180,7 +212,11 @@ class Search extends Component {
       totalHits: totalHits,
       filterLocations,
       addFilterLocation: this.addFilterLocation,
-      updateWithFilters: this.updateWithFilters
+      updateWithFilters: this.updateWithFilters,
+      updateYearStart: this.updateYearStart,
+      updateYearEnd: this.updateYearEnd,
+      yearStart,
+      yearEnd
     };
     
     return [
@@ -214,7 +250,11 @@ function ResultsCounter(props) {
     displayedResults,
     addFilterLocation,
     filterLocations,
-    updateWithFilters
+    updateWithFilters,
+    updateYearStart,
+    updateYearEnd,
+    yearStart,
+    yearEnd
   } = props;
 
   const allowInput = false;
@@ -240,6 +280,23 @@ function ResultsCounter(props) {
               values={filterLocations}
               onChange={addFilterLocation}
             />
+            <br /><br />
+            Year Start
+            <br />
+            <TextInput
+              height={40}
+              placeholder="1234 (numbers only)"
+              value={yearStart}
+              onChange={updateYearStart}
+            /><br /><br />
+            Year End
+            <br />
+            <TextInput
+              height={40}
+              placeholder="1234 (numbers only)"
+              value={yearEnd}
+              onChange={updateYearEnd}
+            />
           </div>
         </Pane>
       }
@@ -256,9 +313,7 @@ function ResultsCounter(props) {
   );
   return (
     <div className="results-count">
-      { totalHits > 0 ?
-        FilterButton : ''
-      }
+      {FilterButton}
       &nbsp;
       Showing {displayedResults}/{totalHits} results...
     </div>
