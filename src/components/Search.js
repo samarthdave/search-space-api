@@ -191,6 +191,7 @@ class Search extends Component {
     const displayedResults = trimmedResults.length;
     // setup props for result item
     const resultsPaneProps = {
+      searchValue,
       MAXRESULTS,
       hits,
       trimmedResults,
@@ -334,9 +335,10 @@ function DialogBox(props) {
     fullTitle,
     secondaryText,
     description,
-    nasa_id
-   } = currentImage;
-
+    nasa_id,
+    date_created
+  } = currentImage;
+  console.log(date_created)
   return (
     <Dialog
       {...props}
@@ -345,15 +347,16 @@ function DialogBox(props) {
     >
       <img className="dialog-img" src={imgURL} alt={secondaryText} />
       <div className="dialog-info">
+      <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" className="twitter-share-button" data-size="large" data-text="Check out this great image I found!" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>
         <Badge color="green" marginRight={8}>ID: {nasa_id}</Badge>
-        <h4>Placeholder text</h4>
+        <h4>{date_created ? new Date(date_created).toDateString() : ''}</h4>
         {description}
       </div>
     </Dialog>
   );
 }
 
-function ResultsPane({ trimmedResults, handleImageClick, loadMoreResults }) {
+function ResultsPane({ trimmedResults, handleImageClick, loadMoreResults, searchValue }) {
   // map into renderable component
   const respectiveBadges = trimmedResults
     // use utils to return array for each result
@@ -393,6 +396,7 @@ function ResultsPane({ trimmedResults, handleImageClick, loadMoreResults }) {
       className="results-pane"
       border="extraMuted">
       <ul id="results-list" style={resultsStyle}>
+        <h2 className="results-heading-text">"<i>{searchValue}</i>"</h2>
         {formattedArray}
         <br/>
         <Button

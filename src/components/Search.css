@@ -94,6 +94,13 @@ h2 {
   margin-top: 3px;
 }
 
+.results-heading-text {
+  font-size: 2.5em;
+  margin: 10px 0;
+  text-align: left;
+  font-family: 'Open Sans', sans-serif;
+}
+
 /* cap image size but keep aspect ratio */
 .thumbnail {
   max-height: 150px;
@@ -139,11 +146,29 @@ h2 {
 /*  */
 
 /* popover is the container of filter pane */
-.css-h45qep {
+div[role=dialog] {
+  background: rgba(0,0,0);
+  background: rgba(0, 0, 0, 0.9);
+}
+div[role=main] {
   background: rgba(0,0,0);
   background: rgba(0, 0, 0, 0.9);
 }
 .filter-pane {
   font-family: 'Merriweather', sans-serif;
   color: #fff;
+}
+
+/* twitter share button */
+.twitter-share-button {
+  margin: 2px;
+  height: 20px;
+  box-sizing: border-box;
+  padding: 1px 6px;
+  background-color: #1b95e0;
+  color: #fff;
+  border-radius: 3px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Open Sans', sans-serif;
 }

@@ -13,3 +13,8 @@ Surge.sh is used to deploy this static site.
 - Axios (for ajax requests)
 - Fontawesome
 - React Router Dom
+
+### Things I learned
+- LOTS of react
+- latency on search
+- CSS styling (backgrounds especially)
