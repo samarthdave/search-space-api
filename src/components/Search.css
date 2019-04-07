@@ -149,6 +149,11 @@ h2 {
 div[role=dialog] {
   background: rgba(0,0,0);
   background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  font-family: 'Open Sans', sans-serif;
+}
+div[role=dialog] h4 {
+  color: #fff;
 }
 div[role=main] {
   background: rgba(0,0,0);

@@ -338,7 +338,7 @@ function DialogBox(props) {
     nasa_id,
     date_created
   } = currentImage;
-  console.log(date_created)
+
   return (
     <Dialog
       {...props}

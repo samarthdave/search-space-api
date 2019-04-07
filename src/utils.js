@@ -73,8 +73,8 @@ const getBadges = (hit) => {
 };
 
 const getImageURL = (hit) => {
-  if(hit.imageURL) {
-    return hit.imageURL;
+  if(hit.imgURL) {
+    return hit.imgURL;
   }
   if(hit.links) {
     return hit.links[0].href;
