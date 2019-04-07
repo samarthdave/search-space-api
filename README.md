@@ -15,6 +15,7 @@ Surge.sh is used to deploy this static site.
 - React Router Dom
 
 ### Things I learned
+- Not to use Evergreen ever again (it does weird stuff when deployed to surge with styling)
 - LOTS of react
 - latency on search
 - CSS styling (backgrounds especially)

@@ -135,9 +135,9 @@ h2 {
 }
 
 .load-more-btn {
-  display: block;
-  margin: 10px auto;
-  font-size: 2em;
+  display: block!important;
+  margin: 10px auto!important;
+  font-size: 1.5em!important;
 }
 
 /*  */
