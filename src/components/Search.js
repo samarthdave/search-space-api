@@ -1,19 +1,14 @@
 import React, { Component } from 'react';
-import {
-  Pane,
-  Button,
-  Icon,
-  SearchInput,
-  Dialog,
-  Badge,
-  Popover,
-  TagInput,
-  TextInput
-} from 'evergreen-ui'; // so.many.imports
+import { Pane } from 'evergreen-ui';
 
 import { NasaAPI } from '../api';
-import InspirationBlock from './InspirationBlock';
 import utils from '../utils';
+
+import InspirationBlock from './InspirationBlock';
+import DialogBox from './DialogBox';
+import ResultsCounter from './ResultsCounter';
+import ResultsPane from './ResultsPane';
+import SearchContainer from './SearchContainer';
 
 import './Search.css';
 
@@ -52,7 +47,7 @@ class Search extends Component {
     this.updateYearEnd = this.updateYearEnd.bind(this);
 
     // temporary addition for testing
-    this.updateSearchResults('Earth');
+    // this.updateSearchResults('Earth');
   }
 
   async updateSearchResults(query) {
@@ -246,199 +241,6 @@ class Search extends Component {
     </>
     );
   }
-}
-
-function ResultsCounter(props) {
-  const {
-    totalHits,
-    displayedResults,
-    addFilterLocation,
-    filterLocations,
-    updateWithFilters,
-    updateYearStart,
-    updateYearEnd,
-    yearStart,
-    yearEnd
-  } = props;
-
-  const allowInput = false;
-  
-  const FilterButton = (
-    <Popover
-      onClose={updateWithFilters}
-      content={
-        <Pane
-          width={320}
-          height={320}
-          padding={15}
-          display="flex"
-          className="filter-pane"
-        >
-          <div className="filter-hits">
-            Location (max 1 item)
-            <br />
-            <TagInput
-              disabled={allowInput}
-              height={40}
-              inputProps={{ placeholder: 'Mars, New York...' }}
-              values={filterLocations}
-              onChange={addFilterLocation}
-            />
-            <br /><br />
-            Year Start
-            <br />
-            <TextInput
-              height={40}
-              placeholder="1234 (numbers only)"
-              value={yearStart}
-              onChange={updateYearStart}
-            /><br /><br />
-            Year End
-            <br />
-            <TextInput
-              height={40}
-              placeholder="1234 (numbers only)"
-              value={yearEnd}
-              onChange={updateYearEnd}
-            />
-          </div>
-        </Pane>
-      }
-    >
-      <Button
-        appearance="primary"
-        intent="success"
-      >
-        <Icon icon="filter" size={20} />
-        &nbsp;
-        Filter
-      </Button>
-    </Popover>
-  );
-  return (
-    <div className="results-count">
-      {FilterButton}
-      &nbsp;
-      Showing {displayedResults}/{totalHits} results...
-    </div>
-  );
-}
-
-function DialogBox(props) {
-  const {
-    currentImage
-  } = props;
-
-  if(!currentImage) {
-    return null;
-  }
-
-  const {
-    imgURL,
-    fullTitle,
-    secondaryText,
-    description,
-    nasa_id,
-    date_created,
-    keywords
-  } = currentImage;
-
-  const badges = (keywords) ? keywords
-    // replace each with a badge and return
-    .map((word) => (
-      <Badge isSolid color="neutral" marginRight={8}>{word}</Badge>
-    )) : null;
-
-  return (
-    <Dialog
-      {...props}
-      title={fullTitle}
-      width={700}
-    >
-      <img className="dialog-img" src={imgURL} alt={secondaryText} />
-      <div className="dialog-info">
-        <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" className="twitter-share-button" data-size="large" data-text="Check out this great image I found!" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>
-        <Badge color="green" marginRight={8}>ID: {nasa_id}</Badge>
-        <br />
-        {badges}
-        <h4>{date_created ? new Date(date_created).toDateString() : ''}</h4>
-        {description}
-      </div>
-    </Dialog>
-  );
-}
-
-function ResultsPane({ trimmedResults, handleImageClick, loadMoreResults, searchValue }) {
-  // map into renderable component
-  const respectiveBadges = trimmedResults
-    // use utils to return array for each result
-    .map((result) => utils.getBadges(result))
-    // replace each with a badge
-    .map((tagsList) => {
-      return tagsList // map and return a badge for each
-        .map((badgeString) => (
-          <Badge isSolid color="neutral" marginRight={8}>{badgeString}</Badge>
-        )).slice(0, 3);
-    });
-  
-  const formattedArray = trimmedResults
-    // use results helper to change array items
-    .map((result) => utils.imageResultsHelper(result))
-    .map(({ imgURL, title, secondaryText }, i) => (
-      <figure
-        className="result-pane" key={i}
-        onClick={() => handleImageClick(i)}
-      >
-        <img className="thumbnail" src={imgURL} alt={secondaryText} />
-        <figcaption>
-          {title}
-          <br/>
-          {respectiveBadges[i]}
-        </figcaption>
-      </figure>
-    ));
-
-  // determine if display none needs to be added
-  const shouldShowEmpty = formattedArray.length === 0;
-  const resultsStyle = {
-    display: shouldShowEmpty ? 'none' : 'block'
-  };
-  return (
-    <Pane
-      className="results-pane"
-      border="extraMuted">
-      <ul id="results-list" style={resultsStyle}>
-        <h2 className="results-heading-text">"<i>{searchValue}</i>"</h2>
-        {formattedArray}
-        <br/>
-        <Button
-          className="load-more-btn"
-          appearance="primary"
-          intent="success"
-          onClick={loadMoreResults}
-        >
-          Load More
-        </Button>
-        <br/>
-      </ul>
-      {/* load 10 more results with pagination button */}
-    </Pane>
-  );
-}
-
-function SearchContainer({ searchValue, onChange }) {
-  return (
-    <div className="search-input">
-      <SearchInput
-        width="100%"
-        height={40}
-        placeholder='Search for ... (e.g. "Rover")'
-        value={searchValue}
-        onChange={onChange}
-        autoFocus
-      />
-    </div>
-  );
 }
 
 export default Search;
