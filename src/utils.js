@@ -66,8 +66,8 @@ const getBadges = (hit) => {
       }
       return keyword;
     })
-    // trim results down to max of 5 labels
-    .slice(0,5);
+    // trim results down to max of 10 labels
+    .slice(0, 10);
 
   return keywords;
 };

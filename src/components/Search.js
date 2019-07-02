@@ -22,6 +22,7 @@ class Search extends Component {
     super(props);
     this.state = {
       // search input latency before ajax request
+      // https://stackoverflow.com/questions/42217121/searching-in-react-when-user-stops-typing
       searchValue: '',
       typing: false,
       typingTimeout: 0,
@@ -51,7 +52,7 @@ class Search extends Component {
     this.updateYearEnd = this.updateYearEnd.bind(this);
 
     // temporary addition for testing
-    // this.updateSearchResults('Earth');
+    this.updateSearchResults('Earth');
   }
 
   async updateSearchResults(query) {
@@ -220,28 +221,30 @@ class Search extends Component {
       yearEnd
     };
     
-    return [
-      <Pane
-        className="search-pane"
-        border="extraMuted"
-      >
-        <h1 className="search-pane-title">Begin your journey</h1>
+    return (
+      <>
+        <Pane
+          className="search-pane"
+          border="extraMuted"
+        >
+          <h1 className="search-pane-title">Begin your journey</h1>
 
-        <InspirationBlock />
-        {/* surround Input w/styling div */}
-        <SearchContainer
-          searchValue={searchValue}
-          onChange={this.searchInputChange}
-        />
-        {/* Show result count and images */}
-        <ResultsCounter {...resultsCounterProps} />
+          <InspirationBlock />
+          {/* surround Input w/styling div */}
+          <SearchContainer
+            searchValue={searchValue}
+            onChange={this.searchInputChange}
+          />
+          {/* Show result count and images */}
+          <ResultsCounter {...resultsCounterProps} />
 
-        {/* embed dialog at end of view */}
-        <DialogBox {...dialogBoxProps} />
+          {/* embed dialog at end of view */}
+          <DialogBox {...dialogBoxProps} />
       </Pane>
-    ,
+
       <ResultsPane {...resultsPaneProps} />
-    ];
+    </>
+    );
   }
 }
 
@@ -336,8 +339,15 @@ function DialogBox(props) {
     secondaryText,
     description,
     nasa_id,
-    date_created
+    date_created,
+    keywords
   } = currentImage;
+
+  const badges = (keywords) ? keywords
+    // replace each with a badge and return
+    .map((word) => (
+      <Badge isSolid color="neutral" marginRight={8}>{word}</Badge>
+    )) : null;
 
   return (
     <Dialog
@@ -347,8 +357,10 @@ function DialogBox(props) {
     >
       <img className="dialog-img" src={imgURL} alt={secondaryText} />
       <div className="dialog-info">
-      <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" className="twitter-share-button" data-size="large" data-text="Check out this great image I found!" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>
+        <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" className="twitter-share-button" data-size="large" data-text="Check out this great image I found!" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>
         <Badge color="green" marginRight={8}>ID: {nasa_id}</Badge>
+        <br />
+        {badges}
         <h4>{date_created ? new Date(date_created).toDateString() : ''}</h4>
         {description}
       </div>
@@ -365,8 +377,8 @@ function ResultsPane({ trimmedResults, handleImageClick, loadMoreResults, search
     .map((tagsList) => {
       return tagsList // map and return a badge for each
         .map((badgeString) => (
-          <Badge color="neutral" isSolid marginRight={8}>{badgeString}</Badge>
-        ));
+          <Badge isSolid color="neutral" marginRight={8}>{badgeString}</Badge>
+        )).slice(0, 3);
     });
   
   const formattedArray = trimmedResults

@@ -2,8 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import App from './App';
-import Welcome from './components/Welcome';
 import Search from './components/Search';
+import Welcome from './components/Welcome';
 
 const createRoutes = () => (
   <Router>
