@@ -59,15 +59,15 @@ const getBadges = (hit) => {
     .filter((keyword) => {
       return typeof keyword === "string";
     })
-    // trim the string if too long
+    // trim the label/string if too long
     .map((keyword) => {
-      if(keyword.length > 30) {
-        keyword = keyword.slice(0, 25) + '...';
+      if(keyword.length >= 15) {
+        keyword = keyword.slice(0, 12) + '...';
       }
       return keyword;
-    })
+    });
     // trim results down to max of 10 labels
-    .slice(0, 10);
+    // .slice(0, 10);
 
   return keywords;
 };
@@ -85,8 +85,41 @@ const getImageURL = (hit) => {
   return 'https://searchspace.surge.sh/static/media/background-min.2558a1d1.png';
 };
 
+// GetBadgeColors --> a generic function to return N number of colors
+const getBadgeColors = (count) => {
+  if (typeof count != "number") return; // must be a #
+
+  let items = ['teal', 'green', 'blue', 'red', 'orange', 'purple', 'yellow'];
+
+  // shuffle
+  for(let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * i);
+    const temp = items[i];
+    items[i] = items[j];
+    items[j] = temp;
+  }
+
+  if (count <= items.length) return items.slice(0, count);
+
+  // repeat the above array items enough times to match N items
+  // eg. count = 15; final = [teal ... yellow, teal ... yellow, +1 (teal)]
+  const final = [];
+  
+  const times = Math.floor(count / items.length);
+  const remainder = count % items.length;
+  for (let i = 0; i < times; i++) {
+    final.push(...items);
+  }
+  
+  // if there are some extra
+  if (remainder) final.push(...items.slice(0, remainder));
+
+  return final;
+}
+
 export default {
   imageResultsHelper,
   getBadges,
-  getImageURL
+  getImageURL,
+  getBadgeColors
 }

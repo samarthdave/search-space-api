@@ -7,7 +7,7 @@ function SearchContainer({ searchValue, onChange }) {
       <SearchInput
         width="100%"
         height={40}
-        placeholder='Search for ... (e.g. "Rover")'
+        placeholder='Search for ... (e.g. "rover")'
         value={searchValue}
         onChange={onChange}
         autoFocus

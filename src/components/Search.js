@@ -47,7 +47,7 @@ class Search extends Component {
     this.updateYearEnd = this.updateYearEnd.bind(this);
 
     // temporary addition for testing
-    // this.updateSearchResults('Earth');
+    // this.updateSearchResults('ship');
   }
 
   async updateSearchResults(query) {

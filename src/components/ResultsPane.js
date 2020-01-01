@@ -14,10 +14,24 @@ function ResultsPane({ trimmedResults, handleImageClick, loadMoreResults, search
     .map((result) => utils.getBadges(result))
     // replace each with a badge
     .map((tagsList) => {
-      return tagsList // map and return a badge for each
-        .map((badgeString) => (
-          <Badge isSolid color="neutral" marginRight={8}>{badgeString}</Badge>
-        )).slice(0, 3);
+      const colors = utils.getBadgeColors(tagsList.length);
+      // TODO: if more than 3 then write "+x more" in another
+      let newTags = tagsList // map and return a badge for each
+        .map((badgeString, i) => {
+          return <Badge isSolid color={colors[i]} marginRight={8} key={i}>{badgeString}</Badge>
+        });
+      
+      if (newTags.length > 3) {
+        const diff = newTags.length - 3;
+        newTags = newTags.slice(0, 3);
+        newTags.push(
+          <Badge isSolid color='neutral' marginRight={8} key={newTags.length+1}>
+            +{diff} more
+          </Badge>
+        );
+      }
+      
+      return newTags;
     });
   
   const formattedArray = trimmedResults
@@ -39,9 +53,8 @@ function ResultsPane({ trimmedResults, handleImageClick, loadMoreResults, search
 
   // determine if display none needs to be added
   const shouldShowEmpty = formattedArray.length === 0;
-  const resultsStyle = {
-    display: shouldShowEmpty ? 'none' : 'block'
-  };
+  const resultsStyle = { display: shouldShowEmpty ? 'none' : 'block' };
+
   return (
     <Pane
       className="results-pane"

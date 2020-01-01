@@ -4,6 +4,8 @@ import {
   Badge
 } from 'evergreen-ui';
 
+import utils from '../utils';
+
 function DialogBox(props) {
   const {
     currentImage
@@ -24,9 +26,11 @@ function DialogBox(props) {
   } = currentImage;
 
   let badges = null;
+  // TODO: random colors on the badges
   if(keywords) {
-    badges = keywords.map((word) => (
-      <Badge isSolid color="neutral" marginRight={8}>{word}</Badge>
+    const colors = utils.getBadgeColors(keywords.length);
+    badges = keywords.map((word, i) => (
+      <Badge isSolid color={colors[i]} marginRight={8}>{word}</Badge>
     ));
   }
 
