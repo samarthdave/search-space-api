@@ -118,7 +118,7 @@ class Search extends Component {
     }
   }
 
-  downloadCurrentImage() {
+  downloadCurrentImage() { // open image url in a new tab
     const { currentImage } = this.state;
     const imageURL = utils.getImageURL(currentImage);
     let win = window.open(imageURL, '_blank');

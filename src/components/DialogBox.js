@@ -47,7 +47,8 @@ function DialogBox(props) {
         <br />
         {badges}
         <h4>{date_created ? new Date(date_created).toDateString() : ''}</h4>
-        {description}
+        <div dangerouslySetInnerHTML={{ __html: description }}></div>
+        {/* {description} */}
       </div>
     </Dialog>
   );

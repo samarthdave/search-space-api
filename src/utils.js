@@ -89,15 +89,7 @@ const getImageURL = (hit) => {
 const getBadgeColors = (count) => {
   if (typeof count != "number") return; // must be a #
 
-  let items = ['teal', 'green', 'blue', 'red', 'orange', 'purple', 'yellow'];
-
-  // shuffle
-  for(let i = items.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * i);
-    const temp = items[i];
-    items[i] = items[j];
-    items[j] = temp;
-  }
+  let items = ['teal', 'red', 'orange', 'green', 'blue', 'purple', 'yellow'];
 
   if (count <= items.length) return items.slice(0, count);
 
