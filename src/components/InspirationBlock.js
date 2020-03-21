@@ -26,9 +26,14 @@ class InspirationBlock extends Component {
       // filter quotes that are too long and no repeats! (if small list)
     } while (quote.length > 220 || quote === this.state.quote);
 
-    this.setState({
-      quote,
-      author
+    this.setState((prevState) => {
+      if (prevState.quote != '' && prevState.author != '') {
+        this.props.refreshPress();
+      }
+      return {
+        quote,
+        author
+      };
     });
   }
 

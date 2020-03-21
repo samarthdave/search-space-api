@@ -1,4 +1,4 @@
-# :rocket: [SearchSpace](https://searchspace.surge.sh/)
+# :rocket: [SearchSpace](https://searchspace.netlify.com/)
 This project is a submission to [MindSumo's Nasa Image Archive](https://www.mindsumo.com/contests/nasa-image-archive) Challenge.
 
 ## :question: What is it?

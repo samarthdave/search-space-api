@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Pane } from 'evergreen-ui';
 
-import { NasaAPI } from '../api';
+import { Quote, NasaAPI } from '../api';
 import utils from '../utils';
 
 import InspirationBlock from './InspirationBlock';
@@ -11,6 +11,9 @@ import ResultsPane from './ResultsPane';
 import SearchContainer from './SearchContainer';
 
 import './Search.css';
+
+// add random choices for refresh button
+const recommendations = ['rover', 'Earth', 'Mars', 'Saturn', 'Neptune'];
 
 class Search extends Component {
   constructor(props) {
@@ -45,6 +48,7 @@ class Search extends Component {
     this.updateWithFilters = this.updateWithFilters.bind(this);
     this.updateYearStart = this.updateYearStart.bind(this);
     this.updateYearEnd = this.updateYearEnd.bind(this);
+    this.refreshPress = this.refreshPress.bind(this);
 
     // temporary addition for testing
     // this.updateSearchResults('ship');
@@ -169,6 +173,15 @@ class Search extends Component {
     this.updateSearchResults(searchValue);
   }
 
+  // update the search bar with random choice of quotes
+  refreshPress() {
+    const loc = Quote.randomInt(0, recommendations.length);
+    const e = {
+      target: { value: recommendations[loc] }
+    };
+    this.searchInputChange(e);
+  }
+
   render() {
     const {
       searchValue,
@@ -208,12 +221,12 @@ class Search extends Component {
       displayedResults: displayedResults,
       totalHits: totalHits,
       filterLocations,
+      yearStart,
+      yearEnd,
       addFilterLocation: this.addFilterLocation,
       updateWithFilters: this.updateWithFilters,
       updateYearStart: this.updateYearStart,
       updateYearEnd: this.updateYearEnd,
-      yearStart,
-      yearEnd
     };
     
     return (
@@ -224,7 +237,7 @@ class Search extends Component {
         >
           <h1 className="search-pane-title">Begin your journey</h1>
 
-          <InspirationBlock />
+          <InspirationBlock refreshPress={this.refreshPress} />
           {/* surround Input w/styling div */}
           <SearchContainer
             searchValue={searchValue}
