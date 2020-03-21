@@ -27,7 +27,7 @@ class InspirationBlock extends Component {
     } while (quote.length > 220 || quote === this.state.quote);
 
     this.setState((prevState) => {
-      if (prevState.quote != '' && prevState.author != '') {
+      if (prevState.quote !== '' && prevState.author !== '') {
         this.props.refreshPress();
       }
       return {
