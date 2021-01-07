@@ -7,6 +7,8 @@ import {
 
 import utils from '../utils';
 
+const colorItems = ['teal', 'red', 'orange', 'green', 'blue', 'purple', 'yellow'];
+
 function ResultsPane({ trimmedResults, handleImageClick, loadMoreResults, searchValue }) {
   // map into renderable component
   const respectiveBadges = trimmedResults
@@ -14,11 +16,10 @@ function ResultsPane({ trimmedResults, handleImageClick, loadMoreResults, search
     .map((result) => utils.getBadges(result))
     // replace each with a badge
     .map((tagsList) => {
-      const colors = utils.getBadgeColors(tagsList.length);
       // TODO: if more than 3 then write "+x more" in another
       let newTags = tagsList // map and return a badge for each
         .map((badgeString, i) => {
-          return <Badge isSolid color={colors[i]} marginRight={8} key={i}>{badgeString}</Badge>
+          return <Badge isSolid color={colorItems[i]} marginRight={8} key={i}>{badgeString}</Badge>
         });
       
       if (newTags.length > 3) {
